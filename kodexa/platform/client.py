@@ -87,6 +87,7 @@ from kodexa.model.objects import (
     PageOrganization,
     DocumentFamilyStatistics, MessageContext, PagePrompt, Prompt, GuidanceSet, PageGuidanceSet, DocumentEmbedding,
 )
+from security import safe_requests
 
 logger = logging.getLogger()
 
@@ -6159,10 +6160,8 @@ class KodexaClient:
         Raises:
             Exception: If the status code is not 200.
         """
-        from requests.auth import HTTPBasicAuth
 
-        obj_response = requests.get(
-            f"{url}/api/account/me",
+        obj_response = safe_requests.get(f"{url}/api/account/me",
             headers={"content-type": "application/json",
                      "x-access-token": token,
                      "cf-access-token": os.environ.get("CF_TOKEN", "")}
@@ -6292,8 +6291,7 @@ class KodexaClient:
         Returns:
             bool: True if the URL exists, False otherwise.
         """
-        response = requests.get(
-            self.get_url(url),
+        response = safe_requests.get(self.get_url(url),
             params=params,
             headers={
                 "x-access-token": self.access_token,
@@ -6319,8 +6317,7 @@ class KodexaClient:
         Returns:
             requests.Response: The response from the server.
         """
-        response = requests.get(
-            self.get_url(url),
+        response = safe_requests.get(self.get_url(url),
             params=params,
             headers={
                 "x-access-token": self.access_token,
