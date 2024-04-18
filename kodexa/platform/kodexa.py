@@ -438,11 +438,7 @@ class RemoteSession:
                 execution = json.loads(r.text)
             else:
                 logger.warning(
-                    "Execution creation failed ["
-                    + r.text
-                    + "], response "
-                    + str(r.status_code)
-                )
+                    "Execution creation failed [%s], response %s", r.text, str(r.status_code))
                 raise Exception(
                     "Execution creation failed ["
                     + r.text
@@ -451,11 +447,7 @@ class RemoteSession:
                 )
         except JSONDecodeError:
             logger.warning(
-                "Unable to handle response ["
-                + r.text
-                + "], response "
-                + str(r.status_code)
-            )
+                "Unable to handle response [%s], response %s", r.text, str(r.status_code))
             raise
 
         return execution
@@ -480,7 +472,7 @@ class RemoteSession:
             try:
                 execution = json.loads(r.text)
             except JSONDecodeError:
-                logger.warning("Unable to handle response [" + r.text + "]")
+                logger.warning("Unable to handle response [%s]", r.text)
                 raise
 
             if status != execution.status:
