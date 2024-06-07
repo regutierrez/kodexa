@@ -5024,8 +5024,8 @@ class DataStoreEndpoint(StoreEndpoint):
         logger.debug(f"Creating data objects in store {url}")
 
         create_response = requests.post(
-            url, json=[data_object.dict(by_alias=True) for data_object in data_objects]
-        )
+            url, json=[data_object.dict(by_alias=True) for data_object in data_objects], 
+        timeout=60)
         return [
             DataObjectEndpoint.model_validate(data_object)
             for data_object in create_response.json()
@@ -6165,8 +6165,8 @@ class KodexaClient:
             f"{url}/api/account/me",
             headers={"content-type": "application/json",
                      "x-access-token": token,
-                     "cf-access-token": os.environ.get("CF_TOKEN", "")}
-        )
+                     "cf-access-token": os.environ.get("CF_TOKEN", "")}, 
+        timeout=60)
         if obj_response.status_code == 200:
             return KodexaClient(url, obj_response.text)
 
@@ -6300,7 +6300,7 @@ class KodexaClient:
                 "cf-access-token": os.environ.get("CF_TOKEN", ""),
                 "content-type": "application/json",
             },
-        )
+        timeout=60)
         if response.status_code == 200:
             return True
         if response.status_code == 404:
@@ -6327,8 +6327,8 @@ class KodexaClient:
                 "cf-access-token": os.environ.get("CF_TOKEN", ""),
                 "content-type": "application/json",
                 "X-Requested-With": "XMLHttpRequest",
-            }
-        )
+            }, 
+        timeout=60)
 
         return process_response(response)
 
@@ -6362,7 +6362,7 @@ class KodexaClient:
             files=files,
             params=params,
             headers=headers,
-        )
+        timeout=60)
         return process_response(response)
 
     def put(
@@ -6394,7 +6394,7 @@ class KodexaClient:
             files=files,
             params=params,
             headers=headers,
-        )
+        timeout=60)
         return process_response(response)
 
     def delete(self, url, params=None) -> requests.Response:
@@ -6413,8 +6413,8 @@ class KodexaClient:
             params=params,
             headers={"x-access-token": self.access_token,
                      "cf-access-token": os.environ.get("CF_TOKEN", ""),
-                     "X-Requested-With": "XMLHttpRequest"}
-        )
+                     "X-Requested-With": "XMLHttpRequest"}, 
+        timeout=60)
         return process_response(response)
 
     def get_url(self, url):

@@ -218,8 +218,8 @@ class UrlConnector:
         # cleaner
         if document.source.original_path.startswith("http"):
             response = requests.get(
-                document.source.original_path, headers=document.source.headers
-            )
+                document.source.original_path, headers=document.source.headers, 
+            timeout=60)
             return io.BytesIO(response.content)
 
         if document.source.headers:

@@ -295,8 +295,8 @@ class KodexaPlatform:
 
         obj_response = requests.get(
             f"{kodexa_url}/api/account/me",
-            headers={"content-type": "application/json", "x-access-token": token, "cf-access-token": os.environ.get("CF_TOKEN", "")}
-        )
+            headers={"content-type": "application/json", "x-access-token": token, "cf-access-token": os.environ.get("CF_TOKEN", "")}, 
+        timeout=60)
         if obj_response.status_code == 200:
             kodexa_config = get_config(profile)
             kodexa_config[profile]["url"] = kodexa_url
@@ -321,7 +321,7 @@ class KodexaPlatform:
                 "cf-access-token": os.environ.get("CF_TOKEN", ""),
                 "content-type": "application/json",
             },
-        )
+        timeout=60)
         if r.status_code == 401:
             raise Exception("Your access token was not authorized")
         if r.status_code == 200:
@@ -370,7 +370,7 @@ class RemoteSession:
             f"{KodexaPlatform.get_url()}/api/actions/{ref.replace(':', '/')}",
             headers={"x-access-token": KodexaPlatform.get_access_token(),
                      "cf-access-token": os.environ.get("CF_TOKEN", "")},
-        )
+        timeout=60)
         if r.status_code == 401:
             raise Exception("Your access token was not authorized")
         if r.status_code == 200:
@@ -391,7 +391,7 @@ class RemoteSession:
             params={self.session_type: self.slug},
             headers={"x-access-token": KodexaPlatform.get_access_token(),
                      "cf-access-token": os.environ.get("CF_TOKEN", "")},
-        )
+        timeout=60)
 
         process_response(r)
 
@@ -432,7 +432,7 @@ class RemoteSession:
             headers={"x-access-token": KodexaPlatform.get_access_token(),
                      "cf-access-token": os.environ.get("CF_TOKEN", "")},
             files=files,
-        )
+        timeout=60)
         try:
             if r.status_code == 200:
                 execution = json.loads(r.text)
@@ -476,7 +476,7 @@ class RemoteSession:
                 f"{KodexaPlatform.get_url()}/api/sessions/{self.cloud_session.id}/executions/{execution.id}",
                 headers={"x-access-token": KodexaPlatform.get_access_token(),
                          "cf-access-token": os.environ.get("CF_TOKEN", "")},
-            )
+            timeout=60)
             try:
                 execution = json.loads(r.text)
             except JSONDecodeError:
@@ -533,7 +533,7 @@ class RemoteSession:
                 f"{KodexaPlatform.get_url()}/api/sessions/{self.cloud_session.id}/executions/{execution.id}/objects/{execution.outputId}",
                 headers={"x-access-token": KodexaPlatform.get_access_token(),
                          "cf-access-token": os.environ.get("CF_TOKEN", "")},
-            )
+            timeout=60)
             return Document.from_kddb(doc.content)
 
         logger.info("No output document")
