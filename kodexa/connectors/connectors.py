@@ -14,9 +14,8 @@ import urllib
 from os.path import join
 from typing import Dict, Type
 
-import requests
-
 from kodexa.model import Document, DocumentMetadata, SourceMetadata
+from security import safe_requests
 
 logger = logging.getLogger()
 
@@ -217,8 +216,7 @@ class UrlConnector:
         # If we have an http URL then we should use requests, it is much
         # cleaner
         if document.source.original_path.startswith("http"):
-            response = requests.get(
-                document.source.original_path, headers=document.source.headers
+            response = safe_requests.get(document.source.original_path, headers=document.source.headers
             )
             return io.BytesIO(response.content)
 
