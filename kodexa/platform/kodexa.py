@@ -33,6 +33,7 @@ from kodexa.model.objects import (
 )
 from kodexa.pipeline import PipelineContext, PipelineStatistics
 from kodexa.platform.client import DocumentStoreEndpoint, KodexaClient, process_response
+from security import safe_requests
 
 logger = logging.getLogger()
 
@@ -301,7 +302,7 @@ class KodexaPlatform:
         """
         from requests.auth import HTTPBasicAuth
 
-        obj_response = requests.get(
+        obj_response = safe_requests.get(
             f"{kodexa_url}/api/account/me",
             headers={"content-type": "application/json", "x-access-token": token, "cf-access-token": os.environ.get("CF_TOKEN", "")}
         )
@@ -326,7 +327,7 @@ class KodexaPlatform:
         Returns:
             dict: The server information.
         """
-        r = requests.get(
+        r = safe_requests.get(
             f"{KodexaPlatform.get_url()}/api",
             headers={
                 "x-access-token": KodexaPlatform.get_access_token(),
@@ -381,7 +382,7 @@ class RemoteSession:
             dict: The metadata of the action if the request is successful.
         """
         logger.debug(f"Downloading metadata for action {ref}")
-        r = requests.get(
+        r = safe_requests.get(
             f"{KodexaPlatform.get_url()}/api/actions/{ref.replace(':', '/')}",
             headers={"x-access-token": KodexaPlatform.get_access_token(),
                      "cf-access-token": os.environ.get("CF_TOKEN", "")},
@@ -487,7 +488,7 @@ class RemoteSession:
         """
         status = execution.status
         while execution.status == "PENDING" or execution.status == "RUNNING":
-            r = requests.get(
+            r = safe_requests.get(
                 f"{KodexaPlatform.get_url()}/api/sessions/{self.cloud_session.id}/executions/{execution.id}",
                 headers={"x-access-token": KodexaPlatform.get_access_token(),
                          "cf-access-token": os.environ.get("CF_TOKEN", "")},
@@ -544,7 +545,7 @@ class RemoteSession:
         """
         if execution.outputId:
             logger.info(f"Downloading output document [{execution.outputId}]")
-            doc = requests.get(
+            doc = safe_requests.get(
                 f"{KodexaPlatform.get_url()}/api/sessions/{self.cloud_session.id}/executions/{execution.id}/objects/{execution.outputId}",
                 headers={"x-access-token": KodexaPlatform.get_access_token(),
                          "cf-access-token": os.environ.get("CF_TOKEN", "")},
@@ -859,7 +860,7 @@ class EventHelper:
             f"Getting content object {content_object_id} in event {self.event.id} in execution {self.event.execution.id}"
         )
 
-        co_response = requests.get(
+        co_response = safe_requests.get(
             f"{KodexaPlatform.get_url()}/api/sessions/{self.event.session_id}/executions/{self.event.execution.id}/objects/{content_object_id}",
             headers={"x-access-token": KodexaPlatform.get_access_token(),
                      "cf-access-token": os.environ.get("CF_TOKEN", "")},
