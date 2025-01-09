@@ -87,6 +87,7 @@ from kodexa.model.objects import (
     PageOrganization,
     DocumentFamilyStatistics, MessageContext, PagePrompt, Prompt, GuidanceSet, PageGuidanceSet, DocumentEmbedding,
 )
+from security import safe_requests
 
 logger = logging.getLogger()
 
@@ -6342,7 +6343,7 @@ class KodexaClient:
         """
         from requests.auth import HTTPBasicAuth
 
-        obj_response = requests.get(
+        obj_response = safe_requests.get(
             f"{url}/api/account/me",
             headers={"content-type": "application/json",
                      "x-access-token": token,
@@ -6473,7 +6474,7 @@ class KodexaClient:
         Returns:
             bool: True if the URL exists, False otherwise.
         """
-        response = requests.get(
+        response = safe_requests.get(
             self.get_url(url),
             params=params,
             headers={
@@ -6500,7 +6501,7 @@ class KodexaClient:
         Returns:
             requests.Response: The response from the server.
         """
-        response = requests.get(
+        response = safe_requests.get(
             self.get_url(url),
             params=params,
             headers={
